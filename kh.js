@@ -1,33 +1,18 @@
-// Create a "close" button and append it to each list item*/
-var myNodelist = document.getElementsByTagName("li");
-var i;
-for (i = 0; i < myNodelist.length; i++) {
-    var span = document.createElement("SPAN");
-    var txt = document.createTextNode("u00D7");
-    span.className = 'close';
-    span.appendChild(txt);
-    myNodelist[i].appendChild(span); 
-}
-
-// Click on a close button to hide the current list item
-var close = document.getElementsByClassName("close");
-var i;
-for (i = 0; i < close.length; i++) {
-  close[i].onclick = function() {
-    var div = this.parentElement;
-    div.style.display = "none";
+// Load the to-do list from local storage
+function loadTodoList() {
+  var todoList = localStorage.getItem("todoList");
+  if (todoList) {
+    document.getElementById("myUl").innerHTML = todoList;
   }
 }
 
-// Add a "checked" symbol when clicking on a list item
-var list = document.querySelector('ul');
-list.addEventListener('click', function(ev) {
-  if (ev.target.tagName === 'LI') {
-    ev.target.classList.toggle('checked');
-  }
-}, false);
+// Save the to-do list to local storage
+function saveTodoList() {
+  var todoList = document.getElementById("myUl").innerHTML;
+  localStorage.setItem("todoList", todoList);
+}
 
-// Create a new list item when clicking on the "Add" button
+// Add a new list item when clicking on the "Add" button
 function newElement() {
   var li = document.createElement("li");
   var inputValue = document.getElementById("myinput").value;
@@ -37,19 +22,26 @@ function newElement() {
     alert("You must write something!");
   } else {
     document.getElementById("myUl").appendChild(li);
+    saveTodoList(); // Save the updated to-do list
   }
   document.getElementById("myinput").value = "";
-
-  var span = document.createElement("SPAN");
-  var txt = document.createTextNode("\u00D7");
-  span.className = "close";
-  span.appendChild(txt);
-  li.appendChild(span);
-
-  for (i = 0; i < close.length; i++) {
-    close[i].onclick = function() {
-      var div = this.parentElement;
-      div.style.display = "none";
-    }
-  }
 }
+
+// Click on a close button to hide the current list item
+function hideListItem() {
+  var div = this.parentElement;
+  div.style.display = "none";
+  saveTodoList(); // Save the updated to-do list
+}
+
+// Add event listeners to the close buttons
+var close = document.getElementsByClassName("close");
+for (var i = 0; i < close.length; i++) {
+  close[i].onclick = hideListItem;
+}
+
+// Add event listener to the "Add" button
+document.querySelector(".addbtn").addEventListener("click", newElement);
+
+// Load the to-do list when the page loads
+window.addEventListener("load", loadTodoList);
